@@ -46,7 +46,7 @@ CREATE TABLE `post` (
     `created_by` varchar(255),
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `updated_by` varchar(255),
-    `is_deleted` BOOLEAN DEFAULT FALSE,
+    `is_deleted` BOOLEAN DEFAULT FALSE,	
     FOREIGN KEY (`user_id`) REFERENCES `user_account`(`user_id`)
 );
 

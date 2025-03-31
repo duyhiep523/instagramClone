@@ -54,4 +54,17 @@ public class PostController {
                 .build();
         return ResponseEntity.ok(response);
     }
+
+
+
+    @GetMapping("/detail/{postId}")
+    public ResponseEntity<?> getPostById(@PathVariable String postId) {
+        PostResponse postResponse = postService.getPostById(postId);
+        Response<Object> response = Response.builder()
+                .code(HttpStatus.OK.value())
+                .message("Lấy chi tiết bài viết thành công")
+                .data(postResponse)
+                .build();
+        return ResponseEntity.ok(response);
+    }
 }

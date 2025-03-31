@@ -12,4 +12,6 @@ public interface IPostService {
     PostResponse createPost(String userId, PostRequest request);
 
     List<PostResponse> getPostsByUserId(String userId);
+
+    PostResponse getPostById(String postId);
 }

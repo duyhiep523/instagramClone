@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -103,6 +102,23 @@ public class PostService implements IPostService {
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public PostResponse getPostById(String postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Bài viết không tồn tại"));
 
+        List<String> fileUrls = postFileRepository.findByPostId(post.getPostId())
+                .stream()
+                .map(PostFile::getFileUrl)
+                .collect(Collectors.toList());
+
+        return PostResponse.builder()
+                .postId(post.getPostId())
+                .content(post.getContent())
+                .privacy(post.getPrivacy().name())
+                .fileUrls(fileUrls)
+                .createdAt(post.getCreatedAt())
+                .build();
+    }
 
 }
