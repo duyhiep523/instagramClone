@@ -53,6 +53,15 @@ public class GlobalException {
                 .build();
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponseCustom> handleBadRequestException(BadRequestException ex) {
+        ErrorResponseCustom errorResponse = ErrorResponseCustom.builder()
+                .code(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ErrorResponseCustom> handleConflictException(ConflictException ex) {
         ErrorResponseCustom error = ErrorResponseCustom.builder()

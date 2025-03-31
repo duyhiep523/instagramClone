@@ -22,6 +22,5 @@ public interface IUserService {
 
     List<UserResponse> searchUsers(String keyword);
 
-    @Transactional
     void changePassword(String userId, ChangePasswordRequest request);
 }

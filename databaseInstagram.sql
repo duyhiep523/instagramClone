@@ -41,7 +41,7 @@ CREATE TABLE `post` (
     `post_id` varchar(50) PRIMARY KEY ,
     `user_id`  varchar(50),
     `content` TEXT,
-    `privacy` ENUM('public', 'private', 'friends')  DEFAULT 'public',  
+    `privacy` ENUM('PUBLIC', 'PRIVATE', 'FRIENDS')  DEFAULT 'PUBLIC',  
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `created_by` varchar(255),
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
