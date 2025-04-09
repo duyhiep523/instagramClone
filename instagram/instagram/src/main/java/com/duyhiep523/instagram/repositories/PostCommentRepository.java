@@ -12,4 +12,6 @@ public interface PostCommentRepository extends JpaRepository<PostComment, String
     List<PostComment> findByParentComment_CommentIdAndIsDeletedFalse(String parentCommentId);
 
     int countByPost_PostId(String postId);
+
+    List<PostComment> findByPost_PostIdAndParentCommentIsNullAndIsDeletedFalse(String postId);
 }

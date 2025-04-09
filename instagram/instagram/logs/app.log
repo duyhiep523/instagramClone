@@ -1,0 +1,67 @@
+2025-04-08T16:08:41.711+07:00  INFO 3552 --- [instagram] [main] c.d.instagram.InstagramApplication       : Starting InstagramApplication using Java 21.0.2 with PID 3552 (E:\doAnThietKeKienTrucPhanMem\instagram\instagram\target\classes started by Admin in E:\doAnThietKeKienTrucPhanMem\instagram\instagram)
+2025-04-08T16:08:41.715+07:00  INFO 3552 --- [instagram] [main] c.d.instagram.InstagramApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-04-08T16:08:42.787+07:00  INFO 3552 --- [instagram] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-08T16:08:42.946+07:00  INFO 3552 --- [instagram] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 145 ms. Found 8 JPA repository interfaces.
+2025-04-08T16:08:43.824+07:00  INFO 3552 --- [instagram] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-04-08T16:08:43.857+07:00  INFO 3552 --- [instagram] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-08T16:08:43.858+07:00  INFO 3552 --- [instagram] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-04-08T16:08:43.981+07:00  INFO 3552 --- [instagram] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-08T16:08:43.982+07:00  INFO 3552 --- [instagram] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2215 ms
+2025-04-08T16:08:44.349+07:00  INFO 3552 --- [instagram] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-08T16:08:44.402+07:00  INFO 3552 --- [instagram] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.11.Final
+2025-04-08T16:08:44.443+07:00  INFO 3552 --- [instagram] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-04-08T16:08:44.757+07:00  INFO 3552 --- [instagram] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-08T16:08:44.796+07:00  INFO 3552 --- [instagram] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-04-08T16:08:45.185+07:00  INFO 3552 --- [instagram] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2a425cf5
+2025-04-08T16:08:45.187+07:00  INFO 3552 --- [instagram] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-04-08T16:08:45.260+07:00  INFO 3552 --- [instagram] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-04-08T16:08:46.263+07:00  INFO 3552 --- [instagram] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-08T16:08:46.370+07:00  INFO 3552 --- [instagram] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-08T16:08:46.814+07:00  INFO 3552 --- [instagram] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-04-08T16:08:48.400+07:00  INFO 3552 --- [instagram] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-04-08T16:08:48.413+07:00  INFO 3552 --- [instagram] [main] c.d.instagram.InstagramApplication       : Started InstagramApplication in 7.198 seconds (process running for 7.546)
+2025-04-08T16:10:20.676+07:00  INFO 3552 --- [instagram] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-04-08T16:10:20.688+07:00  INFO 3552 --- [instagram] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-04-08T16:10:20.691+07:00  INFO 3552 --- [instagram] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-04-08T16:10:20.694+07:00  INFO 3552 --- [instagram] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-04-08T16:10:20.702+07:00  INFO 3552 --- [instagram] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-04-08T16:10:36.676+07:00  INFO 9564 --- [instagram] [main] c.d.instagram.InstagramApplication       : Starting InstagramApplication using Java 21.0.2 with PID 9564 (E:\doAnThietKeKienTrucPhanMem\instagram\instagram\target\classes started by Admin in E:\doAnThietKeKienTrucPhanMem\instagram\instagram)
+2025-04-08T16:10:36.681+07:00  INFO 9564 --- [instagram] [main] c.d.instagram.InstagramApplication       : No active profile set, falling back to 1 default profile: "default"
+2025-04-08T16:10:37.890+07:00  INFO 9564 --- [instagram] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-04-08T16:10:38.008+07:00  INFO 9564 --- [instagram] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 104 ms. Found 8 JPA repository interfaces.
+2025-04-08T16:10:38.674+07:00  INFO 9564 --- [instagram] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-04-08T16:10:38.685+07:00  INFO 9564 --- [instagram] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-08T16:10:38.685+07:00  INFO 9564 --- [instagram] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-04-08T16:10:38.732+07:00  INFO 9564 --- [instagram] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-08T16:10:38.733+07:00  INFO 9564 --- [instagram] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1984 ms
+2025-04-08T16:10:38.910+07:00  INFO 9564 --- [instagram] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-04-08T16:10:38.959+07:00  INFO 9564 --- [instagram] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.11.Final
+2025-04-08T16:10:39.006+07:00  INFO 9564 --- [instagram] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-04-08T16:10:39.298+07:00  INFO 9564 --- [instagram] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-04-08T16:10:39.329+07:00  INFO 9564 --- [instagram] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-04-08T16:10:39.681+07:00  INFO 9564 --- [instagram] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4813d0
+2025-04-08T16:10:39.683+07:00  INFO 9564 --- [instagram] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-04-08T16:10:39.761+07:00  INFO 9564 --- [instagram] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-04-08T16:10:40.727+07:00  INFO 9564 --- [instagram] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-04-08T16:10:40.823+07:00  INFO 9564 --- [instagram] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-04-08T16:10:41.095+07:00  INFO 9564 --- [instagram] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-04-08T16:10:42.664+07:00  INFO 9564 --- [instagram] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-04-08T16:10:42.673+07:00  INFO 9564 --- [instagram] [main] c.d.instagram.InstagramApplication       : Started InstagramApplication in 6.653 seconds (process running for 7.112)
+2025-04-08T17:27:40.561+07:00  WARN 9564 --- [instagram] [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=18m29s853ms213µs700ns).
+2025-04-08T20:20:41.908+07:00  WARN 9564 --- [instagram] [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=34m58s980ms362µs600ns).
+2025-04-08T22:04:41.189+07:00  WARN 9564 --- [instagram] [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h28s482ms429µs300ns).
+2025-04-08T23:30:50.548+07:00  WARN 9564 --- [instagram] [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h16m39s192ms711µs200ns).

@@ -13,6 +13,7 @@ import com.duyhiep523.instagram.exeptions.ConflictException;
 import com.duyhiep523.instagram.exeptions.ResourceNotFoundException;
 import com.duyhiep523.instagram.repositories.UserAccountRepository;
 import com.duyhiep523.instagram.services.Iservices.IUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,37 +21,39 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 public class UserService implements IUserService {
     @Autowired
     UserAccountRepository userRepository;
+
     @Autowired
     private CloudinaryService cloudinaryService;
-
-    /**
-     * Đăng ký người dùng mới.
-     *
-     * @param request DTO chứa thông tin đăng ký.
-     * @return ResponseEntity chứa thông tin phản hồi.
-     */
 
     @Override
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
+        log.info("Registering new user: {}", request.getUserName());
+
         if (userRepository.findByUsername(request.getUserName()).isPresent()) {
+            log.warn("Username {} already exists", request.getUserName());
             throw new ConflictException("Username already exists");
         }
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            log.warn("Email {} already exists", request.getEmail());
             throw new ConflictException("Email already exists");
         }
+
         User user = User.builder()
                 .username(request.getUserName())
                 .email(request.getEmail())
                 .fullName(request.getFullName())
                 .password(request.getPassword())
                 .build();
+
         user = userRepository.save(user);
+        log.info("User {} registered successfully with ID: {}", user.getUsername(), user.getUserId());
+
         return RegisterResponse.builder()
                 .userId(user.getUserId())
                 .username(user.getUsername())
@@ -62,25 +65,27 @@ public class UserService implements IUserService {
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
+//        log.info("User {} attempting to login", loginRequest.getUsername());
         // Implement login logic here
         return null;
     }
 
-    /**
-     * Cập nhật ảnh đại diện của người dùng.
-     *
-     * @param userId ID người dùng cần cập nhật ảnh đại diện.
-     * @param file   Ảnh đại diện mới.
-     * @return Response chứa thông tin user sau khi cập nhật.
-     */
     @Transactional
     @Override
     public UserResponse updateAvatar(String userId, MultipartFile file) {
+        log.info("Updating avatar for user ID: {}", userId);
+
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    log.error("User with ID {} not found", userId);
+                    return new ResourceNotFoundException("User not found");
+                });
+
         String avatarUrl = cloudinaryService.uploadImage(file);
         user.setProfilePictureUrl(avatarUrl);
         user = userRepository.save(user);
+
+        log.info("Avatar updated successfully for user ID: {}", userId);
 
         return UserResponse.builder()
                 .userId(user.getUserId())
@@ -93,25 +98,25 @@ public class UserService implements IUserService {
                 .build();
     }
 
-    /**
-     * Cập nhật thông tin người dùng.
-     *
-     * @param userId  ID người dùng cần cập nhật.
-     * @param request DTO chứa thông tin cập nhật.
-     * @return Response chứa thông tin user sau khi cập nhật.
-     */
     @Override
     @Transactional
     public UserResponse updateUserInfo(String userId, UpdateUserRequest request) {
+        log.info("Updating user info for ID: {}", userId);
+
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    log.error("User with ID {} not found", userId);
+                    return new ResourceNotFoundException("User not found");
+                });
 
         if (!user.getUsername().equals(request.getUsername()) &&
                 userRepository.findByUsername(request.getUsername()).isPresent()) {
+            log.warn("Username {} is already taken", request.getUsername());
             throw new ConflictException("Username already exists");
         }
         if (!user.getEmail().equals(request.getEmail()) &&
                 userRepository.findByEmail(request.getEmail()).isPresent()) {
+            log.warn("Email {} is already taken", request.getEmail());
             throw new ConflictException("Email already exists");
         }
 
@@ -120,7 +125,9 @@ public class UserService implements IUserService {
         user.setFullName(request.getFullName());
         user.setBio(request.getBio());
         user.setGender(Gender.valueOf(request.getGender()));
+
         userRepository.save(user);
+        log.info("User info updated successfully for ID: {}", userId);
 
         return UserResponse.builder()
                 .userId(user.getUserId())
@@ -134,18 +141,17 @@ public class UserService implements IUserService {
                 .build();
     }
 
-
-    /**
-     * Lấy thông tin chi tiết của người dùng.
-     *
-     * @param userId ID người dùng cần lấy thông tin.
-     * @return Response chứa thông tin chi tiết của người dùng.
-     */
     @Override
     public UserResponse getUserDetail(String userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Người dùng không tồn tại"));
+        log.info("Fetching user details for ID: {}", userId);
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.error("User with ID {} not found", userId);
+                    return new ResourceNotFoundException("Người dùng không tồn tại");
+                });
+
+        log.info("User details retrieved successfully for ID: {}", userId);
         return UserResponse.builder()
                 .userId(user.getUserId())
                 .username(user.getUsername())
@@ -159,15 +165,13 @@ public class UserService implements IUserService {
                 .build();
     }
 
-    /**
-     * Tìm kiếm người dùng theo tên người dùng hoặc email.
-     *
-     * @param keyword Từ khóa tìm kiếm.
-     * @return Danh sách người dùng tìm thấy.
-     */
     @Override
     public List<UserResponse> searchUsers(String keyword) {
+        log.info("Searching users with keyword: {}", keyword);
+
         List<User> users = userRepository.findByUsernameContainingOrEmailContaining(keyword, keyword);
+
+        log.info("Found {} users for keyword {}", users.size(), keyword);
 
         return users.stream().map(user -> UserResponse.builder()
                 .userId(user.getUserId())
@@ -182,25 +186,29 @@ public class UserService implements IUserService {
                 .build()).collect(Collectors.toList());
     }
 
-    /**
-     * Thay đổi mật khẩu của người dùng.
-     *
-     * @param userId  ID người dùng cần thay đổi mật khẩu.
-     * @param request DTO chứa thông tin thay đổi mật khẩu.
-     */
     @Transactional
     @Override
     public void changePassword(String userId, ChangePasswordRequest request) {
+        log.info("Changing password for user ID: {}", userId);
+
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng"));
+                .orElseThrow(() -> {
+                    log.error("User with ID {} not found", userId);
+                    return new ResourceNotFoundException("Không tìm thấy người dùng");
+                });
+
         if (!request.getOldPassword().equals(user.getPassword())) {
+            log.warn("Incorrect old password for user ID: {}", userId);
             throw new ConflictException("Mật khẩu cũ không đúng");
         }
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            log.warn("Password confirmation does not match for user ID: {}", userId);
             throw new ConflictException("Xác nhận mật khẩu không khớp");
         }
+
         user.setPassword(request.getNewPassword());
         userRepository.save(user);
+        log.info("Password changed successfully for user ID: {}", userId);
     }
-
 }
+

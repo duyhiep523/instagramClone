@@ -95,7 +95,7 @@ CREATE TABLE `story` (
     `story_id`  varchar(50) PRIMARY KEY ,
     `user_id` varchar(50),
     `type_story` ENUM('FILE', 'TEXT') ,
-	`file` VARCHAR(255) DEFAULT NULL, 
+	`file` VARCHAR(255) DEFAULT NULL,
     `title` varchar(50),
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `created_by` varchar(255),

@@ -1,8 +1,6 @@
 package com.duyhiep523.instagram.services;
 
 
-
-
 import com.duyhiep523.instagram.dtos.request.comment.PostCommentRequest;
 import com.duyhiep523.instagram.dtos.response.comment.PostCommentResponse;
 import com.duyhiep523.instagram.entities.Post;
@@ -15,6 +13,7 @@ import com.duyhiep523.instagram.repositories.UserAccountRepository;
 import com.duyhiep523.instagram.services.Iservices.IPostCommentService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -78,29 +77,47 @@ public class PostCommentService implements IPostCommentService {
         return postCommentRepository.countByPost_PostId(postId);
     }
 
+    @Transactional
     @Override
     public List<PostCommentResponse> getCommentsByPost(String postId) {
-        List<PostComment> comments = postCommentRepository.findByPost_PostIdAndIsDeletedFalse(postId);
-        return comments.stream().map(this::mapToResponse).collect(Collectors.toList());
+        // Lấy danh sách bình luận gốc của bài viết (không có parent)
+        List<PostComment> rootComments = postCommentRepository.findByPost_PostIdAndParentCommentIsNullAndIsDeletedFalse(postId);
+
+        return rootComments.stream()
+                .map(this::mapToResponseWithReplies)
+                .collect(Collectors.toList());
+    }
+
+    private PostCommentResponse mapToResponseWithReplies(PostComment comment) {
+        PostCommentResponse response = mapToResponse(comment);
+
+        // Lấy danh sách bình luận con
+        List<PostComment> replies = postCommentRepository.findByParentComment_CommentIdAndIsDeletedFalse(comment.getCommentId());
+
+        // Đệ quy để lấy danh sách con
+        response.setReplies(replies.stream()
+                .map(this::mapToResponseWithReplies) // Đệ quy cho mỗi comment con
+                .collect(Collectors.toList()));
+
+        return response;
     }
 
     private PostCommentResponse mapToResponse(PostComment comment) {
-        PostCommentResponse response = PostCommentResponse.builder()
+        Hibernate.initialize(comment.getUser()); // Load user trước khi session đóng
+        return PostCommentResponse.builder()
                 .commentId(comment.getCommentId())
                 .postId(comment.getPost().getPostId())
                 .userId(comment.getUser().getUserId())
+                .username(comment.getUser().getUsername())
+                .avatarUrl(comment.getUser().getProfilePictureUrl())
                 .content(comment.getContent())
                 .createdAt(comment.getCreatedAt())
                 .createdBy(comment.getCreatedBy())
                 .isDeleted(comment.getIsDeleted())
+                .replies(comment.getReplies() != null
+                        ? comment.getReplies().stream().map(this::mapToResponse).collect(Collectors.toList())
+                        : List.of())
                 .build();
-
-
-
-
-        List<PostComment> replies = postCommentRepository.findByParentComment_CommentIdAndIsDeletedFalse(comment.getCommentId());
-        response.setReplies(replies.stream().map(this::mapToResponse).collect(Collectors.toList()));
-
-        return response;
     }
+
 }
