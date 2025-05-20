@@ -15,6 +15,7 @@ import com.duyhiep523.instagram.repositories.UserAccountRepository;
 import com.duyhiep523.instagram.services.Iservices.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +30,8 @@ public class UserService implements IUserService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+    @Autowired // <-- TIÊM PASSWORD ENCODER VÀO ĐÂY
+    private PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -48,7 +51,7 @@ public class UserService implements IUserService {
                 .username(request.getUserName())
                 .email(request.getEmail())
                 .fullName(request.getFullName())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .build();
 
         user = userRepository.save(user);
