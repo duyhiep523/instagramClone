@@ -123,4 +123,17 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+
+    @GetMapping("/by-username")
+    public ResponseEntity<?> getUserByUsername(@RequestParam String username) {
+        UserResponse user = iUserService.getUserDetailByUsername(username);
+        Response<Object> response = Response.builder()
+                .code(HttpStatus.OK.value())
+                .message("Lấy thông tin người dùng theo username thành công")
+                .data(user)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+
 }

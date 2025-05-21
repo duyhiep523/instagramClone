@@ -14,4 +14,9 @@ public interface IPostService {
     List<PostResponse> getPostsByUserId(String userId);
 
     PostResponse getPostById(String postId);
+
+    long countPostsByUserId(String userId);
+
+
+    List<PostResponse> getFeedPosts(String userId, int page, int size);
 }

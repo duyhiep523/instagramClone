@@ -67,4 +67,47 @@ public class PostController {
                 .build();
         return ResponseEntity.ok(response);
     }
+
+
+
+
+    /**
+     * Đếm số lượng bài viết của một người dùng.
+     *
+     * @param userId ID của người dùng.
+     * @return ResponseEntity chứa số lượng bài viết.
+     */
+    @GetMapping("/count/{userId}") // <-- Thêm endpoint này
+    public ResponseEntity<?> countPostsByUserId(@PathVariable String userId) {
+        long postCount = postService.countPostsByUserId(userId);
+        Response<Object> response = Response.builder()
+                .code(HttpStatus.OK.value())
+                .message("Đếm số lượng bài viết thành công")
+                .data(postCount)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+    /**
+     * Lấy danh sách bài viết cho New Feed của người dùng.
+     * Bao gồm bài viết từ người dùng đang theo dõi và bài viết công khai khác.
+     *
+     * @param userId ID của người dùng hiện tại.
+     * @param page   Số trang (bắt đầu từ 0).
+     * @param size   Kích thước trang.
+     * @return ResponseEntity chứa danh sách bài viết cho New Feed.
+     */
+    @GetMapping("/feed/{userId}") // Endpoint mới cho New Feed
+    public ResponseEntity<?> getFeedPosts(
+            @PathVariable String userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        List<PostResponse> feedPosts = postService.getFeedPosts(userId, page, size);
+        Response<Object> response = Response.builder()
+                .code(HttpStatus.OK.value())
+                .message("Lấy danh sách bài viết New Feed thành công")
+                .data(feedPosts)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
 }

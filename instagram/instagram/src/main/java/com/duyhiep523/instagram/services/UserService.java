@@ -213,5 +213,28 @@ public class UserService implements IUserService {
         userRepository.save(user);
         log.info("Password changed successfully for user ID: {}", userId);
     }
+
+    @Override
+    public UserResponse getUserDetailByUsername(String username) {
+        log.info("Fetching user details for username: {}", username);
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> {
+                    log.error("User with username {} not found", username);
+                    return new ResourceNotFoundException("Người dùng không tồn tại");
+                });
+
+        return UserResponse.builder()
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .profilePictureUrl(user.getProfilePictureUrl())
+                .bio(user.getBio())
+                .gender(user.getGender().name())
+                .hometown(user.getHometown())
+                .dateOfBirth(user.getDateOfBirth())
+                .build();
+    }
 }
 

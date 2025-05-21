@@ -85,6 +85,31 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            Response<Object> errorResponse = Response.builder()
+                    .code(HttpStatus.UNAUTHORIZED.value())
+                    .message("Token không hợp lệ hoặc đã hết hạn.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
 
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+
+        LoginResponse loginResponseData = LoginResponse.builder()
+                .username(userDetails.getUsername())
+
+                .build();
+
+        Response<Object> response = Response.builder()
+                .code(HttpStatus.OK.value())
+                .message("Lấy thông tin người dùng thành công")
+                .data(loginResponseData)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
 
 }

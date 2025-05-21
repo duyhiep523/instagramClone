@@ -1,6 +1,5 @@
 package com.duyhiep523.instagram.services;
 
-
 import com.duyhiep523.instagram.dtos.request.comment.PostCommentRequest;
 import com.duyhiep523.instagram.dtos.response.comment.PostCommentResponse;
 import com.duyhiep523.instagram.entities.Post;
@@ -25,6 +24,9 @@ public class PostCommentService implements IPostCommentService {
     private final PostCommentRepository postCommentRepository;
     private final PostRepository postRepository;
     private final UserAccountRepository userRepository;
+
+    // Định nghĩa giới hạn độ sâu lồng nhau
+    private static final int MAX_COMMENT_DEPTH = 3;
 
     @Transactional
     @Override
@@ -84,20 +86,26 @@ public class PostCommentService implements IPostCommentService {
         List<PostComment> rootComments = postCommentRepository.findByPost_PostIdAndParentCommentIsNullAndIsDeletedFalse(postId);
 
         return rootComments.stream()
-                .map(this::mapToResponseWithReplies)
+                .map(comment -> mapToResponseWithReplies(comment, 1)) // Bắt đầu với độ sâu 1
                 .collect(Collectors.toList());
     }
 
-    private PostCommentResponse mapToResponseWithReplies(PostComment comment) {
+    private PostCommentResponse mapToResponseWithReplies(PostComment comment, int currentDepth) {
         PostCommentResponse response = mapToResponse(comment);
 
-        // Lấy danh sách bình luận con
-        List<PostComment> replies = postCommentRepository.findByParentComment_CommentIdAndIsDeletedFalse(comment.getCommentId());
+        // Chỉ lấy bình luận con nếu chưa đạt đến giới hạn độ sâu
+        if (currentDepth < MAX_COMMENT_DEPTH) {
+            // Lấy danh sách bình luận con
+            List<PostComment> replies = postCommentRepository.findByParentComment_CommentIdAndIsDeletedFalse(comment.getCommentId());
 
-        // Đệ quy để lấy danh sách con
-        response.setReplies(replies.stream()
-                .map(this::mapToResponseWithReplies) // Đệ quy cho mỗi comment con
-                .collect(Collectors.toList()));
+            // Đệ quy để lấy danh sách con, tăng độ sâu lên 1
+            response.setReplies(replies.stream()
+                    .map(reply -> mapToResponseWithReplies(reply, currentDepth + 1)) // Đệ quy cho mỗi comment con
+                    .collect(Collectors.toList()));
+        } else {
+            // Nếu đã đạt đến giới hạn, không thêm bình luận con
+            response.setReplies(List.of());
+        }
 
         return response;
     }
@@ -114,10 +122,10 @@ public class PostCommentService implements IPostCommentService {
                 .createdAt(comment.getCreatedAt())
                 .createdBy(comment.getCreatedBy())
                 .isDeleted(comment.getIsDeleted())
-                .replies(comment.getReplies() != null
-                        ? comment.getReplies().stream().map(this::mapToResponse).collect(Collectors.toList())
-                        : List.of())
+                // Phần này không còn cần thiết vì logic đệ quy đã được chuyển sang mapToResponseWithReplies
+                // .replies(comment.getReplies() != null
+                //         ? comment.getReplies().stream().map(this::mapToResponse).collect(Collectors.toList())
+                //         : List.of())
                 .build();
     }
-
 }

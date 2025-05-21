@@ -23,4 +23,6 @@ public interface IUserService {
     List<UserResponse> searchUsers(String keyword);
 
     void changePassword(String userId, ChangePasswordRequest request);
+
+    UserResponse getUserDetailByUsername(String username);
 }
