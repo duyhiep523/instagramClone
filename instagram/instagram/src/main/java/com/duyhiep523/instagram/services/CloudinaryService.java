@@ -31,7 +31,7 @@ public class CloudinaryService {
             if (file.isEmpty()) {
                 throw new CloudinaryUploadException("File không được để trống");
             }
-            long maxSize = 5 * 1024 * 1024; // 5MB
+            long maxSize = 10 * 1024 * 1024; // 5MB
             if (file.getSize() > maxSize) {
                 throw new CloudinaryUploadException("Dung lượng file vượt quá 5MB");
             }
