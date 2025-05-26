@@ -19,4 +19,7 @@ public interface IPostService {
 
 
     List<PostResponse> getFeedPosts(String userId, int page, int size);
+
+    @Transactional
+    PostResponse updatePost(String userId, String postId, PostRequest request);
 }

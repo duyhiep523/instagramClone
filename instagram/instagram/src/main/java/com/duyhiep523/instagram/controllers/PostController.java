@@ -56,7 +56,6 @@ public class PostController {
     }
 
 
-
     @GetMapping("/detail/{postId}")
     public ResponseEntity<?> getPostById(@PathVariable String postId) {
         PostResponse postResponse = postService.getPostById(postId);
@@ -69,15 +68,13 @@ public class PostController {
     }
 
 
-
-
     /**
      * Đếm số lượng bài viết của một người dùng.
      *
      * @param userId ID của người dùng.
      * @return ResponseEntity chứa số lượng bài viết.
      */
-    @GetMapping("/count/{userId}") // <-- Thêm endpoint này
+    @GetMapping("/count/{userId}")
     public ResponseEntity<?> countPostsByUserId(@PathVariable String userId) {
         long postCount = postService.countPostsByUserId(userId);
         Response<Object> response = Response.builder()
@@ -87,6 +84,7 @@ public class PostController {
                 .build();
         return ResponseEntity.ok(response);
     }
+
     /**
      * Lấy danh sách bài viết cho New Feed của người dùng.
      * Bao gồm bài viết từ người dùng đang theo dõi và bài viết công khai khác.
@@ -100,12 +98,27 @@ public class PostController {
     public ResponseEntity<?> getFeedPosts(
             @PathVariable String userId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "1000") int size) {
         List<PostResponse> feedPosts = postService.getFeedPosts(userId, page, size);
         Response<Object> response = Response.builder()
                 .code(HttpStatus.OK.value())
                 .message("Lấy danh sách bài viết New Feed thành công")
                 .data(feedPosts)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+
+    @PutMapping("/{userId}/{postId}")
+    public ResponseEntity<?> updatePost(
+            @PathVariable String userId,
+            @PathVariable String postId,
+            @Valid @ModelAttribute PostRequest request) {
+        PostResponse postResponse = postService.updatePost(userId, postId, request);
+        Response<Object> response = Response.builder()
+                .code(HttpStatus.OK.value())
+                .message("Cập nhật bài viết thành công")
+                .data(postResponse)
                 .build();
         return ResponseEntity.ok(response);
     }

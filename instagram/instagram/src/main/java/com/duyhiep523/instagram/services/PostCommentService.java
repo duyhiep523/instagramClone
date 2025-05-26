@@ -92,35 +92,20 @@ public class PostCommentService implements IPostCommentService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Ánh xạ một thực thể PostComment sang DTO PostCommentResponse, xử lý các bình luận trả lời lồng nhau đến độ sâu đã xác định.
-     * Nếu đạt đến độ sâu tối đa, các bình luận trả lời trực tiếp vẫn được bao gồm nhưng không được xử lý đệ quy thêm.
-     *
-     * @param comment Thực thể PostComment để ánh xạ.
-     * @param currentDepth Độ sâu đệ quy hiện tại.
-     * @return DTO PostCommentResponse với các bình luận trả lời được tải theo giới hạn độ sâu.
-     */
-    private PostCommentResponse mapToResponseWithReplies(PostComment comment, int currentDepth) {
-        PostCommentResponse response = mapToResponse(comment); // mapToResponse đã được sửa đổi để bao gồm 1 cấp con trực tiếp
 
-        // Luôn truy xuất các bình luận trả lời trực tiếp cho bình luận hiện tại
+    private PostCommentResponse mapToResponseWithReplies(PostComment comment, int currentDepth) {
+        PostCommentResponse response = mapToResponse(comment);
+
+
         List<PostComment> directReplies = postCommentRepository.findByParentComment_CommentIdAndIsDeletedFalse(comment.getCommentId());
 
         if (currentDepth < MAX_COMMENT_DEPTH) {
-            // Nếu độ sâu hiện tại nhỏ hơn độ sâu tối đa, ánh xạ đệ quy các bình luận trả lời
             response.setReplies(directReplies.stream()
-                    .map(reply -> mapToResponseWithReplies(reply, currentDepth + 1)) // Đệ quy cho các bình luận trả lời sâu hơn
+                    .map(reply -> mapToResponseWithReplies(reply, currentDepth + 1))
                     .collect(Collectors.toList()));
         } else {
-            // Nếu độ sâu hiện tại đã đạt hoặc vượt quá độ sâu tối đa,
-            // bao gồm các bình luận trả lời trực tiếp nhưng không đệ quy thêm.
-            // mapToResponse đã tự động bao gồm 1 cấp con trực tiếp, nên không cần gọi lại ở đây.
-            // Tuy nhiên, để đảm bảo tính nhất quán và rõ ràng, chúng ta vẫn sẽ thiết lập lại replies
-            // nếu cần. Nhưng với logic mới của mapToResponse, phần này có thể được đơn giản hóa.
-            // Logic hiện tại của mapToResponse đã bao gồm việc lấy con trực tiếp.
-            // Do đó, chỉ cần đảm bảo rằng các bình luận con được lấy ra và ánh xạ đúng cách.
             response.setReplies(directReplies.stream()
-                    .map(this::mapToResponse) // mapToResponse sẽ tự động lấy 1 cấp con trực tiếp
+                    .map(this::mapToResponse)
                     .collect(Collectors.toList()));
         }
 
@@ -136,8 +121,6 @@ public class PostCommentService implements IPostCommentService {
      * @return DTO PostCommentResponse.
      */
     private PostCommentResponse mapToResponse(PostComment comment) {
-        // Đảm bảo thực thể người dùng được khởi tạo trước khi truy cập các thuộc tính của nó,
-        // đặc biệt nếu session có thể đóng hoặc thực thể được tải lười biếng.
         Hibernate.initialize(comment.getUser());
 
         PostCommentResponse response = PostCommentResponse.builder()
@@ -155,8 +138,6 @@ public class PostCommentService implements IPostCommentService {
         // Lấy các bình luận con trực tiếp của bình luận này
         List<PostComment> directReplies = postCommentRepository.findByParentComment_CommentIdAndIsDeletedFalse(comment.getCommentId());
 
-        // Ánh xạ các bình luận con trực tiếp này bằng một phương thức đơn giản hơn
-        // không tìm nạp thêm các cấp độ sâu hơn, để tránh đệ quy vô hạn.
         response.setReplies(directReplies.stream()
                 .map(this::mapToResponseSimple)
                 .collect(Collectors.toList()));

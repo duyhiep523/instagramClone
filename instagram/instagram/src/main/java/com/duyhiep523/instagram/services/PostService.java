@@ -17,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.duyhiep523.instagram.entities.Follow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -188,5 +187,67 @@ public class PostService implements IPostService {
                     .build();
         }).collect(Collectors.toList());
     }
+
+
+
+    @Transactional
+    @Override
+    public PostResponse updatePost(String userId, String postId, PostRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Người dùng không tồn tại"));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Bài viết không tồn tại"));
+
+        if (!post.getUser().getUserId().equals(userId)) {
+            throw new BadRequestException("Bạn không có quyền chỉnh sửa bài viết này");
+        }
+        if (request.getContent() != null && !request.getContent().trim().isEmpty()) {
+            post.setContent(request.getContent());
+        }
+        if (request.getPrivacy() != null) {
+            post.setPrivacy(Privacy.valueOf(request.getPrivacy().toUpperCase()));
+        }
+
+        // Nếu có file mới -> xóa toàn bộ file cũ + thêm mới
+        if (request.getFiles() != null && !request.getFiles().isEmpty()) {
+            List<PostFile> oldFiles = postFileRepository.findByPostId(postId);
+            postFileRepository.deleteAll(oldFiles);
+
+            // Upload file mới
+            List<PostFile> newFiles = new ArrayList<>();
+            for (MultipartFile file : request.getFiles()) {
+                String fileUrl = cloudinaryService.uploadImage(file);
+
+                PostFile postFile = PostFile.builder()
+                        .post(post)
+                        .fileUrl(fileUrl)
+                        .build();
+
+                newFiles.add(postFile);
+            }
+            postFileRepository.saveAll(newFiles);
+        }
+
+        postRepository.save(post);
+
+        // Trả về response
+        List<String> fileUrls = postFileRepository.findByPostId(post.getPostId())
+                .stream()
+                .map(PostFile::getFileUrl)
+                .collect(Collectors.toList());
+
+        return PostResponse.builder()
+                .postId(post.getPostId())
+                .userId(post.getUser().getUserId())
+                .content(post.getContent())
+                .privacy(post.getPrivacy().name())
+                .fileUrls(fileUrls)
+                .commentCount(postCommentRepository.countByPost_PostId(post.getPostId()))
+                .likeCount(postReactionRepository.getReactionCountByPost(post.getPostId()))
+                .createdAt(post.getCreatedAt())
+                .build();
+    }
+
 
 }

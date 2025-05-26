@@ -252,7 +252,6 @@ public class HighlightStoryService implements IHighlightStoryService {
             }
 
         } else {
-//            // Nếu không có ảnh mới, xóa toàn bộ ảnh cũ
 //            Iterator<HighlightStoryImage> iterator = story.getImages().iterator();
 //            while (iterator.hasNext()) {
 //                HighlightStoryImage image = iterator.next();
