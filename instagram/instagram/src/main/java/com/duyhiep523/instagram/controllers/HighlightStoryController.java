@@ -125,4 +125,20 @@ public class HighlightStoryController {
         );
     }
 
+
+    @PutMapping("/{userId}/{storyId}")
+    public ResponseEntity<?> updateHighlightStory(
+            @PathVariable String userId,
+            @PathVariable String storyId,
+            @Valid @ModelAttribute HighlightStoryRequest request) {
+        HighlightStoryResponse response = highlightStoryService.updateHighlightStory(userId, storyId, request);
+        return ResponseEntity.ok(
+                Response.builder()
+                        .code(HttpStatus.OK.value())
+                        .message("Cập nhật Highlight Story thành công")
+                        .data(response)
+                        .build()
+        );
+    }
+
 }

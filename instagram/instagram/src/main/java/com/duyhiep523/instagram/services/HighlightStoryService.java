@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -109,6 +110,23 @@ public class HighlightStoryService implements IHighlightStoryService {
 
 
 
+    public String getFirstImageOfStory(HighlightStory story) {
+        return highlightStoryImageRepository
+                .findFirstByHighlightStoryOrderByCreatedAtAsc(story)
+                .map(HighlightStoryImage::getImageUrl)
+                .orElse(null);}
+
+//    @Override
+//    public List<HighlightStoryResponse> getHighlightStoriesByUser(String userId) {
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Người dùng không tồn tại"));
+//
+//        List<HighlightStory> stories = highlightStoryRepository.findByUserAndIsDeletedFalse(user);
+//
+//        return stories.stream()
+//                .map(this::mapToResponse)
+//                .collect(Collectors.toList());
+//    }
 
     @Override
     public List<HighlightStoryResponse> getHighlightStoriesByUser(String userId) {
@@ -118,9 +136,22 @@ public class HighlightStoryService implements IHighlightStoryService {
         List<HighlightStory> stories = highlightStoryRepository.findByUserAndIsDeletedFalse(user);
 
         return stories.stream()
-                .map(this::mapToResponse)
+                .map(story -> {
+                    String imageUrl = getFirstImageOfStory(story);
+
+                    return HighlightStoryResponse.builder()
+                            .storyId(story.getStoryId())
+                            .userId(story.getUser().getUserId())
+                            .storyName(story.getStoryName())
+                            .createdAt(story.getCreatedAt())
+                            .createdBy(story.getCreatedBy())
+                            .isDeleted(story.getIsDeleted())
+                            .storyImage(imageUrl)
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
+
 
     @Transactional
     @Override
@@ -188,6 +219,49 @@ public class HighlightStoryService implements IHighlightStoryService {
         }
 
         return uploadedUrls;
+    }
+
+
+
+    @Transactional
+    @Override
+    public HighlightStoryResponse updateHighlightStory(String userId, String storyId, HighlightStoryRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Người dùng không tồn tại"));
+        HighlightStory story = highlightStoryRepository.findById(storyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Highlight Story không tồn tại"));
+        if (!story.getUser().getUserId().equals(userId)) {
+            throw new UnauthorizedException("Bạn không có quyền cập nhật highlight story này");
+        }
+        if (request.getStoryName() != null && !request.getStoryName().trim().isEmpty()) {
+            story.setStoryName(request.getStoryName());
+        }
+        if (request.getImages() != null && !request.getImages().isEmpty()) {
+            Iterator<HighlightStoryImage> iterator = story.getImages().iterator();
+            while (iterator.hasNext()) {
+                HighlightStoryImage image = iterator.next();
+                iterator.remove();
+            }
+            for (MultipartFile file : request.getImages()) {
+                String imageUrl = cloudinaryService.uploadImage(file);
+                HighlightStoryImage newImage = HighlightStoryImage.builder()
+                        .highlightStory(story)
+                        .imageUrl(imageUrl)
+                        .build();
+                story.getImages().add(newImage);
+            }
+
+        } else {
+//            // Nếu không có ảnh mới, xóa toàn bộ ảnh cũ
+//            Iterator<HighlightStoryImage> iterator = story.getImages().iterator();
+//            while (iterator.hasNext()) {
+//                HighlightStoryImage image = iterator.next();
+//                // cloudinaryService.deleteImage(image.getImageUrl()); // Nếu cần
+//                iterator.remove();
+//            }
+             throw new BadRequestException("Phải cung cấp ít nhất một ảnh mới");
+        }
+        return mapToResponse(story);
     }
 
 }

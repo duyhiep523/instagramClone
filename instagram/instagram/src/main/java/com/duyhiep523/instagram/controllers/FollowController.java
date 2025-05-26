@@ -159,5 +159,23 @@ public class FollowController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Lấy danh sách những người theo dõi bạn nhưng bạn chưa theo dõi lại
+     *
+     * @param currentUserId ID của người dùng hiện tại
+     */
+    @GetMapping("/followers/not-followed-back")
+    public ResponseEntity<?> getFollowersNotFollowedBack(@RequestParam String currentUserId) {
+        List<FollowerResponse> notFollowedBack = followService.getFollowersNotFollowedBack(currentUserId);
+
+        Response<List<FollowerResponse>> response = Response.<List<FollowerResponse>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Danh sách người theo dõi chưa được theo dõi lại")
+                .data(notFollowedBack)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
 
 }

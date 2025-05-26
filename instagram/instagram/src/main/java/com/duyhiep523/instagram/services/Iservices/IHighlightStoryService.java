@@ -18,4 +18,7 @@ public interface IHighlightStoryService {
 
     @Transactional
     void deleteHighlightStory(String userId, String storyId);
+
+    @Transactional
+    HighlightStoryResponse updateHighlightStory(String userId, String storyId, HighlightStoryRequest request);
 }

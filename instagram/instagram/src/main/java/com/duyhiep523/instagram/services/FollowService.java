@@ -181,4 +181,22 @@ public class FollowService implements IFollowService {
                 .build()).collect(Collectors.toList());
     }
 
+
+    @Override
+    public List<FollowerResponse> getFollowersNotFollowedBack(String currentUserId) {
+        List<User> users = followRepository.findFollowersNotFollowedBack(currentUserId);
+
+        return users.stream().map(user -> FollowerResponse.builder()
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                .fullName(user.getFullName())
+                .profilePictureUrl(user.getProfilePictureUrl())
+                .relationshipStatus("followed_back")
+                .build()).collect(Collectors.toList());
+    }
+
+
+
+
+
 }

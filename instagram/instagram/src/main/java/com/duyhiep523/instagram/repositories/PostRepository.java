@@ -13,14 +13,14 @@ import java.util.Optional;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, String> {
-    List<Post> findByUser_UserIdAndIsDeletedFalse(String userId);
+    List<Post> findByUser_UserIdAndIsDeletedFalseOrderByCreatedAtDesc(String userId);
     long countByUser_UserIdAndIsDeletedFalse(String userId);
     @Query("SELECT p FROM Post p " +
             "WHERE p.isDeleted = FALSE AND " +
             "(" +
             "   p.user.userId = :currentUserId OR " + // <-- THÊM DÒNG NÀY: Bao gồm bài viết của chính người dùng
-            "   (p.user.userId IN :followingUserIds AND (p.privacy = 'PUBLIC' OR p.privacy = 'FRIENDS')) OR " + // Bài viết từ người dùng đang theo dõi
-            "   (p.privacy = 'PUBLIC' AND p.user.userId NOT IN :excludeUserIdsForDiscovery) " + // Bài viết công khai từ người khác (loại trừ mình và người theo dõi)
+            "   (p.user.userId IN :followingUserIds AND (p.privacy = 'PUBLIC' OR p.privacy = 'FRIENDS'))  " + // Bài viết từ người dùng đang theo dõi
+            "   " + // Bài viết công khai từ người khác (loại trừ mình và người theo dõi)
             ") " +
             "ORDER BY p.createdAt DESC")
     Page<Post> findFeedPostsForUser(

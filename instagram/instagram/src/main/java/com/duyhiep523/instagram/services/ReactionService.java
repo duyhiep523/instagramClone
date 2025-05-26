@@ -46,6 +46,11 @@ public class ReactionService implements IReactionPostService {
         return postReactionRepository.countByPost_PostId(postId);
     }
 
+    @Override
+    public boolean hasUserReactedToPost(String userId, String postId) {
+        return postReactionRepository.findByUser_UserIdAndPost_PostId(userId, postId).isPresent();
+    }
+
 
     /**
      * Xóa cảm xúc của người dùng với bài viết

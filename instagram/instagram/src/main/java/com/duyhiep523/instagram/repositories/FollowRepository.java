@@ -50,4 +50,18 @@ public interface FollowRepository extends JpaRepository<Follow, String> {
 """)
     List<User> findSuggestedUsers(@Param("userId") String userId);
 
+
+    @Query(value = """
+    SELECT ua.*
+    FROM user_account ua
+    JOIN follow f ON ua.user_id = f.follower_id
+    WHERE f.following_id = :userId
+      AND NOT EXISTS (
+        SELECT 1 FROM follow f2
+        WHERE f2.follower_id = :userId AND f2.following_id = ua.user_id
+      )
+      AND f.is_deleted = FALSE
+    """, nativeQuery = true)
+    List<User> findFollowersNotFollowedBack(@Param("userId") String userId);
+
 }

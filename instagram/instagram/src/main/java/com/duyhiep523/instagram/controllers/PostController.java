@@ -100,7 +100,7 @@ public class PostController {
     public ResponseEntity<?> getFeedPosts(
             @PathVariable String userId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "20") int size) {
         List<PostResponse> feedPosts = postService.getFeedPosts(userId, page, size);
         Response<Object> response = Response.builder()
                 .code(HttpStatus.OK.value())
@@ -109,5 +109,4 @@ public class PostController {
                 .build();
         return ResponseEntity.ok(response);
     }
-
 }

@@ -24,15 +24,7 @@ public class ReactPostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-//    @DeleteMapping("/{userId}/{postId}")
-//    public ResponseEntity<?> removeReactionFromPost(@PathVariable String userId, @PathVariable String postId) {
-//        reactionService.removeReactionFromPost(userId, postId);
-//        Response<Object> response = Response.builder()
-//                .code(HttpStatus.OK.value())
-//                .message("Gỡ cảm xúc thành công")
-//                .build();
-//        return ResponseEntity.ok(response);
-//    }
+
 
     @GetMapping("/count/{postId}")
     public ResponseEntity<?> getReactionCount(@PathVariable String postId) {
@@ -41,6 +33,24 @@ public class ReactPostController {
                 .code(HttpStatus.OK.value())
                 .message("Lấy số lượng cảm xúc thành công")
                 .data(count)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Kiểm tra xem người dùng đã thả cảm xúc cho bài viết hay chưa
+     *
+     * @param userId ID của người dùng
+     * @param postId ID của bài viết
+     * @return true nếu đã thả cảm xúc, false nếu chưa
+     */
+    @GetMapping("/check/{userId}/{postId}")
+    public ResponseEntity<?> checkUserReaction(@PathVariable String userId, @PathVariable String postId) {
+        boolean hasReacted = reactionService.hasUserReactedToPost(userId, postId);
+        Response<Object> response = Response.builder()
+                .code(HttpStatus.OK.value())
+                .message(hasReacted ? "Người dùng đã thả cảm xúc." : "Người dùng chưa thả cảm xúc.")
+                .data(hasReacted)
                 .build();
         return ResponseEntity.ok(response);
     }

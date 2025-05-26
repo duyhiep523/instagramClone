@@ -16,4 +16,5 @@ public class HighlightStoryResponse {
     private LocalDateTime createdAt;
     private String createdBy;
     private Boolean isDeleted;
+    private String storyImage;
 }

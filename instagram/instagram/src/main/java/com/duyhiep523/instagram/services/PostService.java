@@ -91,7 +91,7 @@ public class PostService implements IPostService {
      */
     @Override
     public List<PostResponse> getPostsByUserId(String userId) {
-        List<Post> posts = postRepository.findByUser_UserIdAndIsDeletedFalse(userId);
+        List<Post> posts = postRepository.findByUser_UserIdAndIsDeletedFalseOrderByCreatedAtDesc(userId);
 
         return posts.stream().map(post -> {
             List<String> fileUrls = postFileRepository.findByPostId(post.getPostId())
@@ -150,25 +150,24 @@ public class PostService implements IPostService {
     }
 
     @Override
-    @Transactional // Đảm bảo Hibernate session mở khi truy cập user.getUserId()
+    @Transactional
     public List<PostResponse> getFeedPosts(String userId, int page, int size) {
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Người dùng không tồn tại"));
 
-        // Lấy danh sách ID của những người mà người dùng hiện tại đang theo dõi
+
         List<String> followingUserIds = followRepository.findFollowingByUserId(userId)
                 .stream()
                 .map(User::getUserId)
                 .collect(Collectors.toList());
 
-        // Chuẩn bị danh sách loại trừ (bao gồm userId của người dùng hiện tại và những người đang theo dõi)
-        // để tránh hiển thị trùng lặp bài viết hoặc bài viết của chính mình trong phần "khám phá"
+
         List<String> excludeUserIds = new ArrayList<>(followingUserIds);
-        excludeUserIds.add(userId); // Thêm userId của người dùng hiện tại vào danh sách loại trừ
+        excludeUserIds.add(userId);
 
         Pageable pageable = PageRequest.of(page, size);
 
-        // Gọi truy vấn tùy chỉnh để lấy bài viết cho feed
+
         Page<Post> feedPostsPage = postRepository.findFeedPostsForUser(userId,followingUserIds, excludeUserIds, pageable);
 
         return feedPostsPage.getContent().stream().map(post -> {

@@ -23,4 +23,6 @@ public interface IFollowService {
     long countFollowing(String userId);
 
     List<FollowerResponse> getSuggestedUsers(String userId);
+
+    List<FollowerResponse> getFollowersNotFollowedBack(String currentUserId);
 }
